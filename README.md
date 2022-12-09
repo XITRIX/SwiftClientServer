@@ -1,6 +1,6 @@
 # SwiftClientServer
 
-## Server
+## Server (Mac or Linux)
 
 - Install [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)
 - Install [Vapor](https://docs.vapor.codes/install/macos/)
