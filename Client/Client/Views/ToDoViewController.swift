@@ -24,6 +24,7 @@ class ToDoViewController: UIViewController {
         updateAuthState()
 
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "Header")
         tableView.delegate = self
 
         let refresh = UIRefreshControl()
@@ -33,6 +34,9 @@ class ToDoViewController: UIViewController {
         navigationItem.rightBarButtonItem = .init(title: "Добавить", style: .done, target: self, action: #selector(add))
         navigationItem.leftBarButtonItem = .init(title: "Выйти", style: .plain, target: self, action: #selector(deauth))
         navigationItem.leftBarButtonItem?.tintColor = .systemRed
+
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPress(_:)))
+        tableView.addGestureRecognizer(longPress)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -96,6 +100,35 @@ class ToDoViewController: UIViewController {
             Task { await reloadToDos() }
         }
     }
+
+    @objc func longPress(_ sender: UILongPressGestureRecognizer) {
+        let point = sender.location(in: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: point)
+        else { return }
+
+        var model = models[indexPath.section].models[indexPath.row]
+
+        if sender.state == .began {
+            let alert = UIAlertController(title: "Переименовать", message: nil, preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.placeholder = "ToDo"
+                textField.text = model.title
+            }
+            alert.addAction(.init(title: "Готово", style: .default) { [self] _ in
+                Task {
+                    do {
+                        model.title = alert.textFields?.first?.text ?? ""
+                        try await Api.shared.rename(model)
+                        await reloadToDos()
+                    } catch {
+                        showError(error)
+                    }
+                }
+            })
+            alert.addAction(.init(title: "Отмена", style: .cancel))
+            present(alert, animated: true)
+        }
+    }
 }
 
 extension ToDoViewController: UITableViewDelegate {
@@ -130,7 +163,7 @@ extension ToDoViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard !models.isEmpty else { return nil }
-        let header = UITableViewHeaderFooterView()
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "Header")!
         var content = header.defaultContentConfiguration()
         content.text = models[section].title
         header.contentConfiguration = content

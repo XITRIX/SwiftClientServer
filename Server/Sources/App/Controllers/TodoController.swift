@@ -8,7 +8,8 @@ struct TodoController: RouteCollection {
         todos.post(use: create)
         todos.group(":todoID") { todo in
             todo.delete(use: delete)
-            todo.post(use: checkmark)
+            todo.get(use: checkmark)
+            todo.post(use: rename)
         }
     }
 
@@ -40,6 +41,16 @@ struct TodoController: RouteCollection {
             throw Abort(.notFound)
         }
         todo.checkmark.toggle()
+        try await todo.save(on: req.db)
+        return .ok
+    }
+
+    func rename(req: Request) async throws -> HTTPStatus {
+        guard let todo = try await Todo.find(req.parameters.get("todoID"), on: req.db) else {
+            throw Abort(.notFound)
+        }
+        let todoc = try req.content.decode(Todo.Create.self)
+        todo.title = todoc.title
         try await todo.save(on: req.db)
         return .ok
     }

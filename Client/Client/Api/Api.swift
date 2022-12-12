@@ -143,7 +143,30 @@ class Api {
 
         let url = Api.base.appending(path: "todos").appending(path: model.id.uuidString)
         var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "GET"
+
+        urlRequest.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
+        try data.decode()
+    }
+
+    func rename(_ model: ToDoModel) async throws {
+        guard let authToken = authToken
+        else { throw ServerError.notAuth }
+
+        let json: [String: Any] =
+            ["title": model.title]
+
+        let jsonData = try JSONSerialization.data(withJSONObject: json)
+
+        let url = Api.base.appending(path: "todos").appending(path: model.id.uuidString)
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
+        urlRequest.httpBody = jsonData
+
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
 
         urlRequest.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
 
