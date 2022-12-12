@@ -20,6 +20,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(User.Migration())
     app.migrations.add(UserToken.Migration())
     app.migrations.add(Todo.Migration())
+    app.migrations.add(Todo.Migration2())
 
     // register routes
     try routes(app)

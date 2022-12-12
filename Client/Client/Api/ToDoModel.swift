@@ -7,11 +7,10 @@
 
 import Foundation
 
-struct ToDoModel: Codable, Hashable {
+struct ToDoModel: Codable, Identifiable {
     var id: UUID
     var title: String
+    var checkmark: Bool
 
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
+    var identity: AnyHashable { id }
 }

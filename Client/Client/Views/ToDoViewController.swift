@@ -7,10 +7,15 @@
 
 import UIKit
 
+struct SectionModel {
+    var title: String
+    var models: [ToDoModel]
+}
+
 class ToDoViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
 
-    var models: [ToDoModel] = []
+    var models: [SectionModel] = []
     lazy var dataSource = makeDataSource()
 
     override func viewDidLoad() {
@@ -18,10 +23,7 @@ class ToDoViewController: UIViewController {
 
         updateAuthState()
 
-
-        tableView.allowsSelection = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        tableView.dataSource = dataSource
         tableView.delegate = self
 
         let refresh = UIRefreshControl()
@@ -43,11 +45,15 @@ class ToDoViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    func makeDataSource() -> UITableViewDiffableDataSource<Int, ToDoModel> {
+    func makeDataSource() -> UITableViewComparableDataSource<String, ToDoModel> {
         .init(tableView: tableView) { tableView, _, itemIdentifier in
             let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
             cell.textLabel?.text = itemIdentifier.title
+            cell.accessoryType = itemIdentifier.checkmark ? .checkmark : .none
             return cell
+        } cellUpdater: { _, cell, _, itemIdentifier in
+            cell.textLabel?.text = itemIdentifier.title
+            cell.accessoryType = itemIdentifier.checkmark ? .checkmark : .none
         }
     }
 
@@ -78,11 +84,9 @@ class ToDoViewController: UIViewController {
     }
 
     @objc func deauth() {
-        Task {
-            Api.shared.deauth()
-            models.removeAll()
-            await reloadTableView()
-        }
+        Api.shared.deauth()
+        models.removeAll()
+        reloadTableView()
     }
 
     @objc func updateAuthState() {
@@ -99,7 +103,7 @@ extension ToDoViewController: UITableViewDelegate {
         .init(actions: [.init(style: .destructive, title: "Удалить", handler: { [self] _, _, callback in
             Task {
                 do {
-                    let model = models[indexPath.row]
+                    let model = models[indexPath.section].models[indexPath.row]
                     try await Api.shared.removeToDo(model)
                     await reloadToDos()
                     callback(true)
@@ -110,23 +114,53 @@ extension ToDoViewController: UITableViewDelegate {
             }
         })])
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        Task {
+            do {
+                let model = models[indexPath.section].models[indexPath.row]
+                try await Api.shared.toggleCheckmark(model)
+                await reloadToDos()
+            } catch {
+                showError(error)
+            }
+        }
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard !models.isEmpty else { return nil }
+        let header = UITableViewHeaderFooterView()
+        var content = header.defaultContentConfiguration()
+        content.text = models[section].title
+        header.contentConfiguration = content
+        return header
+    }
 }
 
 private extension ToDoViewController {
     func reloadToDos() async {
         do {
-            models = try await Api.shared.getToDos()
-            await reloadTableView()
+            let localModels = try await Api.shared.getToDos()
+                .sorted(by: { $0.title.caseInsensitiveCompare($1.title) == .orderedAscending })
+                .sorted(by: { $0.checkmark && !$1.checkmark })
+
+            models = Dictionary(grouping: localModels, by: { $0.checkmark })
+                .map {  SectionModel(title: $0.key ? "Готово" : "Сделать", models: $0.value) }
+                .sorted(by: { $0.title > $1.title })
+            reloadTableView()
         } catch {
             showError(error)
         }
     }
 
-    func reloadTableView() async {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ToDoModel>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(models, toSection: 0)
-        await dataSource.apply(snapshot)
+    func reloadTableView() {
+        var snapshot = NSDiffableDataSourceSnapshot<String, ToDoModel>()
+        snapshot.appendSections(models.map { $0.title })
+        for section in models {
+            snapshot.appendItems(section.models, toSection: section.title)
+        }
+        dataSource.apply(snapshot)
     }
 
     func showLoginScreen() {

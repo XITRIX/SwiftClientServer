@@ -14,4 +14,14 @@ extension Todo {
             try await database.schema("todos").delete()
         }
     }
+
+    struct Migration2: AsyncMigration {
+        func prepare(on database: Database) async throws {
+            try await database.schema("todos")
+                .field("checkmark", .bool, .required, .sql(.default(false)))
+                .update()
+        }
+
+        func revert(on database: Database) async throws {}
+    }
 }

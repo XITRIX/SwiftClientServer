@@ -136,14 +136,27 @@ class Api {
         let (data, _) = try await URLSession.shared.data(for: urlRequest)
         try data.decode()
     }
+
+    func toggleCheckmark(_ model: ToDoModel) async throws {
+        guard let authToken = authToken
+        else { throw ServerError.notAuth }
+
+        let url = Api.base.appending(path: "todos").appending(path: model.id.uuidString)
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+
+        urlRequest.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
+        try data.decode()
+    }
 }
 
 extension Data {
     func decode() throws {
-        do {
-            let error = try JSONDecoder().decode(ServerError.self, from: self)
+        if let error = try? JSONDecoder().decode(ServerError.self, from: self) {
             throw error
-        } catch {}
+        }
     }
 
     func decode<T: Decodable>() throws -> T {

@@ -8,6 +8,7 @@ struct TodoController: RouteCollection {
         todos.post(use: create)
         todos.group(":todoID") { todo in
             todo.delete(use: delete)
+            todo.post(use: checkmark)
         }
     }
 
@@ -21,7 +22,7 @@ struct TodoController: RouteCollection {
         let user = try req.auth.require(User.self)
         try Todo.Create.validate(content: req)
         let todoc = try req.content.decode(Todo.Create.self)
-        let todo = Todo(title: todoc.title, userID: try user.requireID())
+        let todo = Todo(title: todoc.title, checkmark: false, userID: try user.requireID())
         try await todo.save(on: req.db)
         return todo
     }
@@ -32,5 +33,14 @@ struct TodoController: RouteCollection {
         }
         try await todo.delete(on: req.db)
         return .noContent
+    }
+
+    func checkmark(req: Request) async throws -> HTTPStatus {
+        guard let todo = try await Todo.find(req.parameters.get("todoID"), on: req.db) else {
+            throw Abort(.notFound)
+        }
+        todo.checkmark.toggle()
+        try await todo.save(on: req.db)
+        return .ok
     }
 }
