@@ -2,6 +2,8 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
+    try app.register(collection: OAuthController())
+
     app.post("register") { req async throws -> UserToken in
         try User.Create.validate(content: req)
         let create = try req.content.decode(User.Create.self)

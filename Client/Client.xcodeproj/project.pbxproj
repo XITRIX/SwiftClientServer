@@ -19,6 +19,8 @@
 		7CEB9D6B29435AF300F17E36 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB9D6A29435AF300F17E36 /* RegisterViewController.swift */; };
 		7CEB9D6D294375C500F17E36 /* ToDoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB9D6C294375C500F17E36 /* ToDoModel.swift */; };
 		7CEB9D702943770D00F17E36 /* UIViewController+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB9D6F2943770D00F17E36 /* UIViewController+Error.swift */; };
+		7CFBE953294F7ED600757067 /* Api+OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBE952294F7ED600757067 /* Api+OAuth.swift */; };
+		7CFBE955294F820E00757067 /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBE954294F820E00757067 /* AuthController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		7CEB9D6A29435AF300F17E36 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		7CEB9D6C294375C500F17E36 /* ToDoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoModel.swift; sourceTree = "<group>"; };
 		7CEB9D6F2943770D00F17E36 /* UIViewController+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Error.swift"; sourceTree = "<group>"; };
+		7CFBE952294F7ED600757067 /* Api+OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Api+OAuth.swift"; sourceTree = "<group>"; };
+		7CFBE954294F820E00757067 /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				7CEB9D642943514100F17E36 /* Api.swift */,
+				7CFBE952294F7ED600757067 /* Api+OAuth.swift */,
 				7CEB9D6C294375C500F17E36 /* ToDoModel.swift */,
 			);
 			path = Api;
@@ -96,6 +101,7 @@
 				7CEB9D68294359C100F17E36 /* ToDoViewController.swift */,
 				7C4111372940D20900CC0A1D /* LoginViewController.swift */,
 				7CEB9D6A29435AF300F17E36 /* RegisterViewController.swift */,
+				7CFBE954294F820E00757067 /* AuthController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -184,6 +190,8 @@
 				7CEB9D702943770D00F17E36 /* UIViewController+Error.swift in Sources */,
 				7CEB9D6D294375C500F17E36 /* ToDoModel.swift in Sources */,
 				7C0E1B102943F6FA006C4B8E /* DataSource.swift in Sources */,
+				7CFBE955294F820E00757067 /* AuthController.swift in Sources */,
+				7CFBE953294F7ED600757067 /* Api+OAuth.swift in Sources */,
 				7C4111382940D20900CC0A1D /* LoginViewController.swift in Sources */,
 				7C4111342940D20900CC0A1D /* AppDelegate.swift in Sources */,
 				7CEB9D6B29435AF300F17E36 /* RegisterViewController.swift in Sources */,

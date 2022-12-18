@@ -22,15 +22,19 @@ struct ServerError: Codable, LocalizedError {
     static var notAuth: ServerError {
         .init(error: true, reason: "Not auth")
     }
+
+    static var incorrectResponse: ServerError {
+        .init(error: true, reason: "Incorrect response")
+    }
 }
 
 class Api {
     static var authDidChange: NSNotification.Name { .init(rawValue: "ApiAuthDidChange") }
-    private static let base = URL(string: "http://192.168.1.144:8080")!
+    internal static let base = URL(string: "http://192.168.1.144:8080")!
 
     static let shared = Api()
 
-    private var authToken: String? {
+    private(set) internal var authToken: String? {
         didSet {
             UserDefaults.standard.set(authToken, forKey: "authToken")
             NotificationCenter.default.post(name: Api.authDidChange, object: self)
@@ -47,6 +51,11 @@ class Api {
 
     func deauth() {
         authToken = nil
+    }
+
+    func auth(with url: URL) async throws {
+        let auth = try await UserToken.from(url: url).value
+        authToken = auth
     }
 
     func login(username: String, password: String) async throws {
@@ -189,5 +198,13 @@ extension Data {
             let error = try JSONDecoder().decode(ServerError.self, from: self)
             throw error
         }
+    }
+}
+
+extension Decodable {
+    static func from(url: URL) async throws -> Self {
+        var urlRequest = URLRequest(url: url)
+        let (data, _) = try await URLSession.shared.data(for: urlRequest)
+        return try data.decode()
     }
 }

@@ -55,7 +55,8 @@ extension User: ModelAuthenticatable {
     static let passwordHashKey = \User.$passwordHash
 
     func verify(password: String) throws -> Bool {
-        try Bcrypt.verify(password, created: self.passwordHash)
+        if password.isEmpty { throw Abort(.unauthorized) }
+        return try Bcrypt.verify(password, created: self.passwordHash)
     }
 }
 

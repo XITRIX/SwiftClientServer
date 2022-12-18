@@ -19,7 +19,6 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="chk-de-41Z">
                                 <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tgk-tf-OaG"/>
@@ -49,7 +48,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="hZU-2B-eEk">
-                                <rect key="frame" x="16" y="322" width="358" height="200"/>
+                                <rect key="frame" x="16" y="294" width="358" height="256"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3mc-00-FJf">
                                         <rect key="frame" x="0.0" y="0.0" width="358" height="34"/>
@@ -91,6 +90,32 @@
                                             <segue destination="cdQ-s5-ZQw" kind="show" id="oCb-BO-fuo"/>
                                         </connections>
                                     </button>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="fNd-6G-msj">
+                                        <rect key="frame" x="0.0" y="212" width="358" height="44"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sRh-5W-BtI" customClass="UIControl">
+                                                <rect key="frame" x="0.0" y="0.0" width="358" height="44"/>
+                                                <subviews>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="VkLogo" translatesAutoresizingMaskIntoConstraints="NO" id="cEd-5t-jXL">
+                                                        <rect key="frame" x="0.0" y="5" width="358" height="34"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="34" id="q5F-6C-hs5"/>
+                                                        </constraints>
+                                                    </imageView>
+                                                </subviews>
+                                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                                <constraints>
+                                                    <constraint firstItem="cEd-5t-jXL" firstAttribute="leading" secondItem="sRh-5W-BtI" secondAttribute="leading" id="BJh-ti-vhS"/>
+                                                    <constraint firstAttribute="height" constant="44" id="Eq9-cr-J4u"/>
+                                                    <constraint firstItem="cEd-5t-jXL" firstAttribute="centerY" secondItem="sRh-5W-BtI" secondAttribute="centerY" id="Nle-94-2CR"/>
+                                                    <constraint firstAttribute="trailing" secondItem="cEd-5t-jXL" secondAttribute="trailing" id="TpA-1f-w43"/>
+                                                </constraints>
+                                                <connections>
+                                                    <action selector="vkAuthAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xYd-Az-V1a"/>
+                                                </connections>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -227,11 +252,15 @@
         </scene>
     </scenes>
     <resources>
+        <image name="VkLogo" width="1200" height="630"/>
         <namedColor name="AccentColor">
             <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

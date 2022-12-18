@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WebKit
 
 class LoginViewController: UIViewController {
     @IBOutlet var login: UITextField!
@@ -32,5 +33,16 @@ class LoginViewController: UIViewController {
         }
     }
 
+    @IBAction func vkAuthAction(_ sender: Any) {
+        Task {
+            do {
+                let link = try await Api.shared.getOAuthLink()
+                let codeUrl = try await AuthController.present(from: self, with: link).get()
+                try await Api.shared.auth(with: codeUrl)
+                dismiss(animated: true)
+            } catch {
+                showError(error)
+            }
+        }
+    }
 }
-
